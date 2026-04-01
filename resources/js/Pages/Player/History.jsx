@@ -1,7 +1,7 @@
-export default function ManagerGamesCreate() {
+export default function PlayerHistory() {
     return (
         <h1 className="text-center text-2xl m-4">
-            Manager - Games - Create
+            Player - History
         </h1>
     );
 }

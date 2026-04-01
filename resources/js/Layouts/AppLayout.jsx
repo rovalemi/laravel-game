@@ -13,15 +13,15 @@ export default function AppLayout({ children, title }) {
         administrador: [
             { href: route("admin.dashboard"), label: "Dashboard", icon: "◈" },
             { href: route("admin.users.index"), label: "Usuarios", icon: "◉" },
-            { href: route("manager.games.index"), label: "Juegos", icon: "◆" },
+            // { href: route("manager.games.index"), label: "Juegos", icon: "◆" },
         ],
         gestor: [
-            { href: route("manager.dashboard"), label: "Dashboard", icon: "◈" },
-            { href: route("manager.games.index"), label: "Mis Juegos", icon: "◆" },
+            // { href: route("manager.dashboard"), label: "Dashboard", icon: "◈" },
+            // { href: route("manager.games.index"), label: "Mis Juegos", icon: "◆" },
         ],
         jugador: [
-            { href: route("player.games.index"), label: "Juegos", icon: "◆" },
-            { href: route("player.games.history"), label: "Mis Partidas", icon: "◉" },
+            // { href: route("player.games.index"), label: "Juegos", icon: "◆" },
+            // { href: route("player.games.history"), label: "Mis Partidas", icon: "◉" },
         ],
     };
 

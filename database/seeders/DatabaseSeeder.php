@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@gameplatform.local',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('Admin123!'),
             'role_id' => $admin->id,
         ]);
 
@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         $managerUser = User::create([
             'name' => 'Gestor Demo',
             'email' => 'gestor@gameplatform.local',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('Manager123!'),
             'role_id' => $manager->id,
         ]);
 
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Jugador Demo',
             'email' => 'jugador@gameplatform.local',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('Player123!'),
             'role_id' => $player->id,
         ]);
 

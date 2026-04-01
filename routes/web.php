@@ -41,18 +41,18 @@ Route::middleware(['auth', 'role:administrador'])->prefix('admin')->name('admin.
     Route::resource('users', AdminUserController::class);
 });
 
-/** Panel Gestor (accesible también por admin) */
-Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Manager/Games/Index'))->name('dashboard');
+// /** Panel Gestor (accesible también por admin) */
+// Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
+//     Route::get('/dashboard', fn () => Inertia::render('Manager/Games/Index'))->name('dashboard');
 
-    Route::resource('games', ManagerGameController::class);
-    // Route::path('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
-    Route::get('games/{game}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
-});
+//     Route::resource('games', ManagerGameController::class);
+//     // Route::path('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
+//     Route::get('games/{game}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
+// });
 
-/** Área Jugador */
-Route::middleware(['auth', 'role:jugador'])->prefix('games')->name('player.')->group(function () {
-    Route::get("/", [PlayerGameController::class, 'index'])->name('games.index');
-    Route::get('/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
-        Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
-});
+// /** Área Jugador */
+// Route::middleware(['auth', 'role:jugador'])->prefix('games')->name('player.')->group(function () {
+//     Route::get("/", [PlayerGameController::class, 'index'])->name('games.index');
+//     Route::get('/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
+//         Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
+// });
