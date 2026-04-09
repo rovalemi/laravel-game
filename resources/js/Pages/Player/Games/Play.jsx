@@ -113,7 +113,7 @@ export default function PlayerGamesPlay({ game, apiToken }) {
                                 <p className="text-xs font-semibold text-cyan-400 mb-0.5">
                                     {msg.user?.name ?? 'Anónimo'}
                                 </p>
-                                <p className="text-sm text-zinc-200 break-words leading-snug">
+                                <p className="text-sm text-zinc-200 wrap-break-word leading-snug">
                                     {msg.message}
                                 </p>
                             </div>
