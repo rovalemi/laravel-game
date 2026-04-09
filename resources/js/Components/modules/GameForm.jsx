@@ -1,12 +1,8 @@
 import { Link } from '@inertiajs/react';
-import Input, { Textarea } from '@/Components/ui/Input';
-import Button from '@/Components/ui/Button';
-import Toggle from '@/Components/ui/Toggle';
 
-/**
- * GameForm — formulario compartido por Create y Edit
- * El padre (Create/Edit) proporciona { data, setData, errors, submit, processing, isEditing }
- */
+import Input, { Textarea } from '@/Components/ui/Input';
+import { Button, Toggle } from '@/Components/ui';
+
 export default function GameForm({ data, setData, errors, submit, processing, isEditing = false }) {
     return (
         <form onSubmit={submit} encType="multipart/form-data" className="flex flex-col gap-5">

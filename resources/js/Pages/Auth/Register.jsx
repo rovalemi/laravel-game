@@ -1,6 +1,7 @@
+import { useForm, Head, Link } from "@inertiajs/react";
+
 import { AuthBackground, AuthCard } from "@/Components/shared";
 import { Label, Input, Error, Button } from "@/Components/ui";
-import { useForm, Head, Link } from "@inertiajs/react";
 
 export default function Register() {
     const { data, setData, post, processing, errors } = useForm({

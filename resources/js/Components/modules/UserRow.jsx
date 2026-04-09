@@ -1,19 +1,12 @@
-import { Link } from '@inertiajs/react';
-import Badge from '@/Components/ui/Badge';
-import Button from '@/Components/ui/Button';
-
-/**
- * UserRow — fila de usuario para la tabla del admin
- * El borrado usa ConfirmModal del padre (no window.confirm)
- */
+import { Badge, Button } from '@/Components/ui';
 
 const roleBadge = {
     administrador: 'violet',
-    gestor:        'blue',
-    jugador:       'gray',
+    gestor: 'blue',
+    jugador: 'gray',
 };
 
-export default function UserRow({ user, currentUserId, onDeleteRequest }) {
+export default function UserRow({ user, currentUserId, onDeleteRequest, onEditRequest }) {
     const isCurrentUser = user.id === currentUserId;
 
     return (
@@ -51,9 +44,13 @@ export default function UserRow({ user, currentUserId, onDeleteRequest }) {
             {/* Acciones */}
             <td className="px-5 py-3">
                 <div className="flex items-center gap-2 justify-end">
-                    <Link href={route('admin.users.edit', user.id)}>
-                        <Button size="sm" variant="secondary">Editar</Button>
-                    </Link>
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => onEditRequest(user)}
+                    >
+                        Editar
+                    </Button>
                     <Button
                         size="sm"
                         variant="danger"

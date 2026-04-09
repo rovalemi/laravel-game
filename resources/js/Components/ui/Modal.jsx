@@ -1,13 +1,5 @@
 import { useEffect } from 'react';
 
-/**
- * Modal — diálogo accesible con overlay
- *
- * Uso:
- *   <Modal open={open} onClose={() => setOpen(false)} title="Confirmar acción">
- *     <p>¿Estás seguro?</p>
- *   </Modal>
- */
 export default function Modal({ open, onClose, title, children, maxWidth = 'md' }) {
     // Cerrar con Escape
     useEffect(() => {

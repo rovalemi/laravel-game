@@ -1,3 +1,7 @@
+import { useForm } from '@inertiajs/react';
+
+import UserForm from '@/Components/modules/UserForm';
+
 export default function AdminUsersCreate({ roles, onClose }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '', email: '', password: '', password_confirmation: '', role_id: '',

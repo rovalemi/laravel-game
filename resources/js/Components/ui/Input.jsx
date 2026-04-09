@@ -1,16 +1,9 @@
-/**
- * Input — campo de texto con label y mensaje de error integrados
- *
- * Uso:
- *   <Input id="email" label="Email" type="email" error={errors.email}
- *          value={data.email} onChange={e => setData('email', e.target.value)} />
- */
 export default function Input({
     id,
     label,
     error,
     hint,
-    type      = 'text',
+    type = 'text',
     className = '',
     ...props
 }) {

@@ -3,9 +3,8 @@ import { useState } from 'react';
 
 import AppLayout from '@/Layouts/AppLayout';
 import { PageHeader, ConfirmModal } from '@/Components/shared';
-import UserRow from '@/Components/modules/UserRow';
+import { UserRow, UserCreateModal, UserEditModal } from '@/Components/modules';
 import { Pagination, EmptyState, Button } from '@/Components/ui';
-import UserCreateModal from '@/Components/modules/UserCreateModal';
 
 export default function AdminUsersIndex({ users, roles }) {
     const { auth } = usePage().props;
@@ -91,6 +90,7 @@ export default function AdminUsersIndex({ users, roles }) {
                                     user={user}
                                     currentUserId={auth.user.id}
                                     onDeleteRequest={setToDelete}
+                                    onEditRequest={setEditingUser}
                                 />
                             ))}
                         </tbody>

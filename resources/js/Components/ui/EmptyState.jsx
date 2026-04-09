@@ -1,9 +1,3 @@
-/**
- * EmptyState — placeholder cuando una lista no tiene datos
- *
- * Uso:
- *   <EmptyState icon="◆" title="Sin juegos" description="Crea el primero." action={...} />
- */
 export default function EmptyState({ icon = '◆', title, description, action }) {
     return (
         <div className="flex flex-col items-center justify-center py-16 px-8 text-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/50">

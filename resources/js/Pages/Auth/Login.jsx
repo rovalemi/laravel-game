@@ -1,6 +1,7 @@
+import { useForm, Head } from "@inertiajs/react";
+
 import { AuthBackground, AuthCard } from "@/Components/shared";
 import { Label, Input, Error, Button } from "@/Components/ui";
-import { useForm, Head } from "@inertiajs/react";
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({

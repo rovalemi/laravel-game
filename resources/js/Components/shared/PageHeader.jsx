@@ -1,13 +1,3 @@
-/**
- * PageHeader — cabecera de página con título, subtítulo y acción opcional
- *
- * Uso:
- *   <PageHeader
- *     title="Gestión de Juegos"
- *     subtitle="12 juegos en el sistema"
- *     action={<Link href={...} className="...">+ Nuevo</Link>}
- *   />
- */
 export default function PageHeader({ title, subtitle, action }) {
     return (
         <div className="flex items-start justify-between gap-4 mb-8">

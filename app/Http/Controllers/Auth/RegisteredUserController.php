@@ -16,11 +16,6 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Muestra el formulario de registro.
-     * Solo el administrador puede crear usuarios desde el panel de administrador
-     * Este registro público crea usuarios con rol "jugador" por defecto.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
@@ -29,12 +24,11 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // El registro público siempre asigna rol "jugador"
         $playerRole = Role::where('name', Role::PLAYER)->firstOrFail();
 
         $user = User::create([

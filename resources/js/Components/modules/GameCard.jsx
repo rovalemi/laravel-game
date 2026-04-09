@@ -1,13 +1,7 @@
 import { Link, router } from '@inertiajs/react';
-import Badge from '@/Components/ui/Badge';
-import Button from '@/Components/ui/Button';
 
-/**
- * GameCard — tarjeta de juego para el panel del gestor
- * Muestra estado, título, URL y acciones (publicar, previsualizar, editar, eliminar)
- *
- * `onDeleteRequest` abre el ConfirmModal del padre en lugar de usar window.confirm
- */
+import { Badge, Button } from '@/Components/ui';
+
 export default function GameCard({ game, onDeleteRequest }) {
     const togglePublish = () => {
         router.patch(route('manager.games.toggle-publish', game.id));

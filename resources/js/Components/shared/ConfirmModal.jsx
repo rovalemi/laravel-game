@@ -1,20 +1,5 @@
-import Modal from '@/Components/ui/Modal';
-import Button from '@/Components/ui/Button';
+import { Modal, Button } from '@/Components/ui';
 
-/**
- * ConfirmModal — modal de confirmación para acciones destructivas
- *
- * Uso:
- *   <ConfirmModal
- *     open={confirmOpen}
- *     onClose={() => setConfirmOpen(false)}
- *     onConfirm={() => router.delete(route(...))}
- *     title="Eliminar usuario"
- *     description='¿Seguro que quieres eliminar a "Juan"? Esta acción no se puede deshacer.'
- *     confirmLabel="Sí, eliminar"
- *     danger
- *   />
- */
 export default function ConfirmModal({
     open,
     onClose,

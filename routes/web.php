@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Manager\GameController as ManagerGameController;
 use App\Http\Controllers\Player\GameController as PlayerGameController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,13 +14,19 @@ Route::get('/home', function () {
 });
 
 Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route(match (auth()->user()->role->name) {
-            'administrador' => 'admin.dashboard',
-            'gestor' => 'manager.dashboard',
-            default => 'player.games.index',
-        })
-        : Inertia::render('Welcome');
+    if (!Auth::check()) {
+        return Inertia::render('Welcome');
+    }
+
+    $role = Auth::user()->role->name;
+
+    $route = match ($role) {
+        'administrador' => 'admin.dashboard',
+        'gestor' => 'manager.dashboard',
+        default => 'player.games.index',
+    };
+
+    return redirect()->route($route);
 })->name('home');
 
 /** Authentication */
@@ -38,21 +45,21 @@ Route::middleware('auth')->group(function () {
 /** Panel Administrador */
 Route::middleware(['auth', 'role:administrador'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard'))->name('dashboard');
-    Route::resource('users', AdminUserController::class);
+    Route::resource('users', AdminUserController::class)->except(['create', 'edit']);;
 });
 
-// /** Panel Gestor (accesible también por admin) */
-// Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
-//     Route::get('/dashboard', fn () => Inertia::render('Manager/Games/Index'))->name('dashboard');
+/** Panel Gestor (accesible también por admin) */
+Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
+    Route::get('/dashboard', fn () => Inertia::render('Manager/Dashboard'))->name('dashboard');
 
-//     Route::resource('games', ManagerGameController::class);
-//     // Route::path('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
-//     Route::get('games/{game}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
-// });
+    Route::resource('games', ManagerGameController::class);
+    Route::patch('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
+    Route::get('games/{game}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
+});
 
-// /** Área Jugador */
-// Route::middleware(['auth', 'role:jugador'])->prefix('games')->name('player.')->group(function () {
-//     Route::get("/", [PlayerGameController::class, 'index'])->name('games.index');
-//     Route::get('/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
-//         Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
-// });
+/** Panel Jugador */
+Route::middleware(['auth', 'role:jugador'])->prefix('player')->name('player.')->group(function () {
+    Route::get('/games', [PlayerGameController::class, 'index'])->name('games.index');
+    Route::get('/games/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
+    Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
+});

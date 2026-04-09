@@ -1,7 +1,7 @@
 import { usePage } from "@inertiajs/react";
 import { useState } from "react";
-import Sidebar from "@/Components/layouts/Sidebar";
-import Topbar from "@/Components/layouts/Topbar";
+
+import { Sidebar, Topbar } from "@/Components/layouts";
 
 export default function AppLayout({ children, title }) {
     const { auth } = usePage().props;
@@ -13,15 +13,15 @@ export default function AppLayout({ children, title }) {
         administrador: [
             { href: route("admin.dashboard"), label: "Dashboard", icon: "◈" },
             { href: route("admin.users.index"), label: "Usuarios", icon: "◉" },
-            // { href: route("manager.games.index"), label: "Juegos", icon: "◆" },
+            { href: route("manager.games.index"), label: "Juegos", icon: "◆" },
         ],
         gestor: [
-            // { href: route("manager.dashboard"), label: "Dashboard", icon: "◈" },
-            // { href: route("manager.games.index"), label: "Mis Juegos", icon: "◆" },
+            { href: route("manager.dashboard"), label: "Dashboard", icon: "◈" },
+            { href: route("manager.games.index"), label: "Mis Juegos", icon: "◆" },
         ],
         jugador: [
-            // { href: route("player.games.index"), label: "Juegos", icon: "◆" },
-            // { href: route("player.games.history"), label: "Mis Partidas", icon: "◉" },
+            { href: route("player.games.index"), label: "Juegos", icon: "◆" },
+            { href: route("player.games.history"), label: "Mis Partidas", icon: "◉" },
         ],
     };
 

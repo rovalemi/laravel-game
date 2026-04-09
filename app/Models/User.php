@@ -26,7 +26,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'face_image_path', // Nunca exponer la ruta de la imagen facial en la API
+        'face_image_path',
     ];
 
     protected $casts = [

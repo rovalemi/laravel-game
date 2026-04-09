@@ -1,16 +1,10 @@
-/**
- * StatCard — tarjeta de métrica para dashboards
- *
- * Uso:
- *   <StatCard label="Usuarios totales" value={42} icon="◉" trend="+3 esta semana" />
- */
 export default function StatCard({ label, value, icon, trend, color = 'violet' }) {
     const colors = {
         violet: 'text-violet-400',
-        cyan:   'text-cyan-400',
-        green:  'text-emerald-400',
-        amber:  'text-amber-400',
-        red:    'text-red-400',
+        cyan: 'text-cyan-400',
+        green: 'text-emerald-400',
+        amber: 'text-amber-400',
+        red: 'text-red-400',
     };
 
     return (

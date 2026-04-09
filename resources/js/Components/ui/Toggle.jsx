@@ -1,10 +1,3 @@
-/**
- * Toggle — interruptor on/off
- *
- * Uso:
- *   <Toggle checked={data.published} onChange={v => setData('published', v)}
- *           label="Publicado" hint="Visible para jugadores" />
- */
 export default function Toggle({ checked, onChange, label, hint }) {
     return (
         <label className="flex items-start gap-3 cursor-pointer group">

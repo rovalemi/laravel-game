@@ -1,13 +1,5 @@
 import { Link } from '@inertiajs/react';
 
-/**
- * Pagination — paginación compatible con los links que devuelve Laravel
- *
- * Uso:
- *   <Pagination links={users.links} />
- *
- * `links` es el array de { url, label, active } que devuelve paginate() de Eloquent
- */
 export default function Pagination({ links }) {
     if (!links || links.length <= 3) return null;
 

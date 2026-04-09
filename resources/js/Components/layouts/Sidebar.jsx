@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+
 import SidebarItem from "@/Components/shared/SidebarItem";
 import Avatar from "@/Components/ui/Avatar";
 

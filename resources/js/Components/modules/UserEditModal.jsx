@@ -1,6 +1,7 @@
+import { useForm } from '@inertiajs/react';
+
 import UserForm from '@/Components/modules/UserForm';
 import Button from '@/Components/ui/Button';
-import { useForm } from '@inertiajs/react';
 
 export default function UserEditModal({ user, onClose, roles }) {
     const { data, setData, put, processing, errors } = useForm({

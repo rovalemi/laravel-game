@@ -1,19 +1,20 @@
 import { Head, Link } from '@inertiajs/react';
+
 import AppLayout from '@/Layouts/AppLayout';
-import StatCard from '@/Components/shared/StatCard';
-import PageHeader from '@/Components/shared/PageHeader';
+import { StatCard, PageHeader } from '@/Components/shared';
 
 export default function AdminDashboard({ stats = {} }) {
     const cards = [
-        { label: 'Usuarios totales',    value: stats.users          ?? '—', icon: '◉', color: 'violet' },
-        { label: 'Juegos publicados',   value: stats.published_games ?? '—', icon: '◆', color: 'cyan'   },
-        { label: 'Sesiones hoy',        value: stats.sessions_today  ?? '—', icon: '◈', color: 'green'  },
-        { label: 'Jugadores activos',   value: stats.active_players  ?? '—', icon: '⬡', color: 'amber'  },
+        { label: 'Usuarios totales', value: stats.users ?? '—', icon: '◉', color: 'violet' },
+        { label: 'Juegos publicados', value: stats.published_games ?? '—', icon: '◆', color: 'cyan' },
+        { label: 'Sesiones hoy', value: stats.sessions_today ?? '—', icon: '◈', color: 'green' },
+        { label: 'Jugadores activos', value: stats.active_players ?? '—', icon: '⬡', color: 'amber' },
     ];
 
     const quickActions = [
-        { href: route('admin.users.index'),   label: 'Gestionar usuarios', icon: '◈', desc: 'Ver, editar y eliminar usuarios' },
-        // { href: route('manager.games.index'), label: 'Ver juegos',         icon: '◆', desc: 'Gestionar catálogo de juegos'   },
+        { href: route('admin.users.index'), label: 'Gestionar usuarios', icon: '◈', desc: 'Ver, editar y eliminar usuarios' },
+        { href: route('manager.dashboard'), label: 'Gestionar juegos', icon: '◈', desc: 'Ver, editar y eliminar juegos' },
+        { href: route('manager.games.index'), label: 'Ver juegos', icon: '◆', desc: 'Gestionar catálogo de juegos' },
     ];
 
     return (
