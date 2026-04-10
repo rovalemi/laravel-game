@@ -1,0 +1,8 @@
+services:
+  microservicio_facial:
+    build:
+      context: ./microservicio_facial
+    container_name: microservicio_facial
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
