@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: laravel-game-php
+    container_name: laravel-game-app
     volumes:
       - .:/var/www/html
     depends_on:
