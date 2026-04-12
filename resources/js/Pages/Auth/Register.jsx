@@ -1,15 +1,41 @@
 import { useForm, Head, Link } from "@inertiajs/react";
+import { useEffect, useRef } from "react";
 
 import { AuthBackground, AuthCard } from "@/Components/shared";
 import { Label, Input, Error, Button } from "@/Components/ui";
 
 export default function Register() {
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         email: "",
         password: "",
         password_confirmation: "",
+        face_image: "",
     });
+
+    useEffect(() => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoRef.current.srcObject = stream;
+            });
+    }, []);
+
+    const captureFace = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0);
+
+        const base64 = canvas.toDataURL("image/jpeg");
+        setData("face_image", base64);
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -21,11 +47,8 @@ export default function Register() {
             <Head title="Registro" />
 
             <div className="min-h-screen flex items-center justify-center p-6 relative bg-bg text-text">
-
-                {/* Fondo */}
                 <AuthBackground />
 
-                {/* Tarjeta */}
                 <AuthCard>
                     <div className="flex items-center gap-3 mb-7">
                         <span className="text-3xl text-accent">⬡</span>
@@ -37,9 +60,21 @@ export default function Register() {
                         Únete como jugador y empieza a jugar
                     </p>
 
-                    <form onSubmit={submit} className="flex flex-col gap-5">
+                    {/* Cámara */}
+                    <div className="mb-4 flex flex-col items-center">
+                        <video ref={videoRef} autoPlay className="w-full rounded" />
+                        <canvas ref={canvasRef} className="hidden" />
+                        <Button
+                            type="button"
+                            onClick={captureFace}
+                            className="mt-3 mx-auto"
+                        >
+                            Capturar rostro
+                        </Button>
+                        <Error message={errors.face_image} />
+                    </div>
 
-                        {/* Campos */}
+                    <form onSubmit={submit} className="flex flex-col gap-5">
                         {[
                             { id: "name", label: "Nombre", type: "text", auto: "name" },
                             { id: "email", label: "Email", type: "email", auto: "email" },
@@ -61,12 +96,12 @@ export default function Register() {
                             </div>
                         ))}
 
-                        {/* Botón */}
                         <Button type="submit" disabled={processing}>
                             {processing ? "Creando cuenta…" : "Registrarse"}
                         </Button>
                     </form>
 
+                    {/* ⬇️ Esto también lo mantenemos */}
                     <p className="text-center text-sm text-muted mt-5">
                         ¿Ya tienes cuenta?{" "}
                         <Link

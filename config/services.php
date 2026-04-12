@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'microservicio' => [
+        'url' => env('MICROSERVICE_URL'),
+    ],
+
 ];

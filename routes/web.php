@@ -63,3 +63,5 @@ Route::middleware(['auth', 'role:jugador'])->prefix('player')->name('player.')->
     Route::get('/games/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
     Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
 });
+
+Route::get('/test-facial', [\App\Http\Controllers\FacialTestController::class, 'status']);

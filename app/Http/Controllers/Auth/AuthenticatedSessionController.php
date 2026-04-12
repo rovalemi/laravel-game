@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use App\Services\FacialService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,19 +18,37 @@ class AuthenticatedSessionController extends Controller
         return Inertia::render('Auth/Login');
     }
 
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request, FacialService $facial)
     {
-        $request->authenticate();
-        $request->session()->regenerate();
+        $request->validate([
+            'email' => ['required', 'email'],
+            'face_image' => ['required'], // ← NUEVO
+        ]);
 
-        $user = Auth::user();
+        $user = User::where('email', $request->email)->first();
 
-        // Redirigir según rol tras login
-        return match ($user->role->name) {
-            'administrador' => redirect()->route('admin.dashboard'),
-            'gestor' => redirect()->route('manager.dashboard'),
-            default => redirect()->route('player.games.index'),
-        };
+        if (!$user) {
+            return back()->withErrors(['email' => 'Usuario no encontrado']);
+        }
+
+        if (!$user->face_enrolled || !$user->face_image_path) {
+            return back()->withErrors(['face_image' => 'El usuario no tiene rostro registrado']);
+        }
+
+        // 1. Enviar imagen capturada + ruta de referencia al microservicio
+        $result = $facial->verify(
+            $request->face_image,
+            storage_path('app/public/' . $user->face_image_path)
+        );
+
+        if (!isset($result['match']) || !$result['match']) {
+            return back()->withErrors(['face_image' => 'El rostro no coincide']);
+        }
+
+        // 2. Login exitoso
+        Auth::login($user);
+
+        return redirect()->intended(route('player.games.index'));
     }
 
     public function destroy(Request $request): RedirectResponse
