@@ -36,7 +36,7 @@ def verify(data: VerifyRequest):
 
     diff = np.mean((gray_login - gray_ref) ** 2)
 
-    threshold = 2000
+    threshold = 95
     match = diff < threshold
 
     return {

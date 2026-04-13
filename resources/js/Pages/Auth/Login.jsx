@@ -1,5 +1,5 @@
 import { useForm, Head } from "@inertiajs/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AuthBackground, AuthCard } from "@/Components/shared";
 import { Label, Input, Error, Button } from "@/Components/ui";
@@ -7,6 +7,7 @@ import { Label, Input, Error, Button } from "@/Components/ui";
 export default function Login() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const [captured, setCaptured] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
         email: "",
@@ -33,6 +34,8 @@ export default function Login() {
 
         const base64 = canvas.toDataURL("image/jpeg");
         setData("face_image", base64);
+
+        setCaptured(true);
     };
 
     const submit = (e) => {
@@ -67,7 +70,7 @@ export default function Login() {
                             onClick={captureFace}
                             className="mt-3 mx-auto"
                         >
-                            Capturar rostro
+                            {captured ? "Rostro capturado ✔" : "Capturar rostro"}
                         </Button>
                         <Error message={errors.face_image} />
                     </div>

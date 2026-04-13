@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'face_image' => ['required'], // ← NUEVO
+            'face_image' => ['required'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -35,17 +35,19 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors(['face_image' => 'El usuario no tiene rostro registrado']);
         }
 
-        // 1. Enviar imagen capturada + ruta de referencia al microservicio
-        $result = $facial->verify(
-            $request->face_image,
-            storage_path('app/public/' . $user->face_image_path)
+        $referenceImage = 'data:image/jpeg;base64,' . base64_encode(
+            file_get_contents(storage_path('app/public/' . $user->face_image_path))
         );
 
+        $result = $facial->verify(
+            $request->face_image,
+            $referenceImage
+        );
+        
         if (!isset($result['match']) || !$result['match']) {
             return back()->withErrors(['face_image' => 'El rostro no coincide']);
         }
 
-        // 2. Login exitoso
         Auth::login($user);
 
         return redirect()->intended(route('player.games.index'));
