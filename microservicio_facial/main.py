@@ -33,8 +33,8 @@ def verify(data: VerifyRequest):
         result = DeepFace.verify(
             img1_path=img1,
             img2_path=img2,
-            model_name="ArcFace",
-            detector_backend="retinaface",
+            model_name="Facenet512",
+            detector_backend="opencv",
             enforce_detection=True
         )
 
