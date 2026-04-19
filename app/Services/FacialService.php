@@ -6,9 +6,16 @@ use Illuminate\Support\Facades\Http;
 
 class FacialService
 {
-    public function status()
+    public function status(): bool
     {
-        return Http::get(config('services.microservicio.url').'/status')->json();
+        try {
+            $response = Http::timeout(3)
+                ->get(config('services.microservicio.url') . '/status');
+
+            return $response->successful();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function detect(string $imageBase64)

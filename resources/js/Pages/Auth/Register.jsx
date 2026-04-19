@@ -1,5 +1,5 @@
 import { useForm, Head, Link } from "@inertiajs/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { AuthBackground, AuthCard } from "@/Components/shared";
 import { Label, Input, Error, Button } from "@/Components/ui";
@@ -7,7 +7,10 @@ import { Label, Input, Error, Button } from "@/Components/ui";
 export default function Register() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+
+    const [showCamera, setShowCamera] = useState(false);
     const [captured, setCaptured] = useState(false);
+    const [facialAvailable, setFacialAvailable] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
         name: "",
@@ -18,11 +21,21 @@ export default function Register() {
     });
 
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                videoRef.current.srcObject = stream;
-            });
+        fetch("/facial/status")
+            .then((r) => r.json())
+            .then((data) => setFacialAvailable(data.available));
     }, []);
+
+    const enableCamera = async () => {
+        setShowCamera(true);
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = stream;
+    };
+
+    const stopCamera = () => {
+        const stream = videoRef.current?.srcObject;
+        if (stream) stream.getTracks().forEach((t) => t.stop());
+    };
 
     const captureFace = () => {
         const video = videoRef.current;
@@ -38,10 +51,12 @@ export default function Register() {
         setData("face_image", base64);
 
         setCaptured(true);
+        stopCamera();
     };
 
     const submit = (e) => {
         e.preventDefault();
+        stopCamera();
         post(route("register"));
     };
 
@@ -63,19 +78,36 @@ export default function Register() {
                         Únete como jugador y empieza a jugar
                     </p>
 
-                    {/* Cámara */}
-                    <div className="mb-4 flex flex-col items-center">
-                        <video ref={videoRef} autoPlay className="w-full rounded" />
-                        <canvas ref={canvasRef} className="hidden" />
-                        <Button
-                            type="button"
-                            onClick={captureFace}
-                            className="mt-3 mx-auto"
-                        >
-                            {captured ? "Rostro capturado ✔" : "Capturar rostro"}
-                        </Button>
-                        <Error message={errors.face_image} />
-                    </div>
+                    {!facialAvailable && (
+                        <p className="text-center text-warning mb-4">
+                            La verificación facial no está disponible en este momento.
+                        </p>
+                    )}
+
+                    {facialAvailable && !showCamera && (
+                        <div className="flex justify-center mb-4">
+                            <Button type="button" onClick={enableCamera}>
+                                Registrar rostro (opcional)
+                            </Button>
+                        </div>
+                    )}
+
+                    {showCamera && (
+                        <div className="mb-4 flex flex-col items-center">
+                            <video ref={videoRef} autoPlay className="w-full rounded" />
+                            <canvas ref={canvasRef} className="hidden" />
+
+                            <Button
+                                type="button"
+                                onClick={captureFace}
+                                className="mt-3"
+                            >
+                                {captured ? "Rostro capturado ✔" : "Capturar rostro"}
+                            </Button>
+
+                            <Error message={errors.face_image} />
+                        </div>
+                    )}
 
                     <form onSubmit={submit} className="flex flex-col gap-5">
                         {[
@@ -104,13 +136,9 @@ export default function Register() {
                         </Button>
                     </form>
 
-                    {/* ⬇️ Esto también lo mantenemos */}
                     <p className="text-center text-sm text-muted mt-5">
                         ¿Ya tienes cuenta?{" "}
-                        <Link
-                            href={route("login")}
-                            className="text-accent hover:underline"
-                        >
+                        <Link href={route("login")} className="text-accent hover:underline">
                             Iniciar sesión
                         </Link>
                     </p>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Manager\GameController as ManagerGameController;
 use App\Http\Controllers\Player\GameController as PlayerGameController;
+use App\Services\FacialService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -65,3 +66,9 @@ Route::middleware(['auth', 'role:jugador'])->prefix('player')->name('player.')->
 });
 
 Route::get('/test-facial', [\App\Http\Controllers\FacialTestController::class, 'status']);
+
+Route::get('/facial/status', function (FacialService $facial) {
+    return response()->json([
+        'available' => $facial->status()
+    ]);
+});
