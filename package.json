@@ -7,16 +7,20 @@
         "dev": "vite"
     },
     "devDependencies": {
+        "@laravel/echo-react": "^2.3.3",
         "@tailwindcss/vite": "^4.2.2",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
+        "laravel-echo": "^2.3.4",
         "laravel-vite-plugin": "^3.0.0",
+        "pusher-js": "^8.5.0",
         "tailwindcss": "^4.2.2",
         "vite": "^8.0.0"
     },
     "dependencies": {
         "@inertiajs/react": "^3.0.0",
         "@vitejs/plugin-react": "^6.0.1",
+        "face-api.js": "^0.22.2",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
         "ziggy-js": "^2.6.2"

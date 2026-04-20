@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Manager\GameController as ManagerGameController;
 use App\Http\Controllers\Player\GameController as PlayerGameController;
 use App\Services\FacialService;
@@ -41,6 +42,8 @@ Route::middleware('guest')->group(function() {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/chat', fn() => Inertia::render('Chat'))->name('chat');
+    Route::post('/chat', [ChatController::class, 'store']);
 });
 
 /** Panel Administrador */
