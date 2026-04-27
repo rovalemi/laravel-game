@@ -13,7 +13,7 @@ class GameController extends Controller
     public function index(): Response
     {
         $games = Game::published()
-            ->select('id', 'title', 'description', 'thumbnail_path', 'updated_at')
+            ->select('id', 'slug', 'title', 'description', 'thumbnail_path', 'updated_at')
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -23,6 +23,13 @@ class GameController extends Controller
     public function play(Game $game): Response
     {
         abort_unless($game->published, 404);
+
+        if ($game->component) {
+            return Inertia::render('Games/' . $game->component, [
+                'game'     => $game,
+                'apiToken' => Auth::user()->createToken('game-session')->plainTextToken,
+            ]);
+        }
 
         return Inertia::render('Player/Games/Play', [
             'game'     => $game->only('id', 'title', 'description', 'url', 'thumbnail_path'),

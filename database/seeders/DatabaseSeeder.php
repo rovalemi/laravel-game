@@ -57,21 +57,60 @@ class DatabaseSeeder extends Seeder
         ]);
 
         /** Juegos de ejemplo */
-        
-        Game::create([
-            'title' => 'Space Explorer',
-            'description' => 'Explora el espacio en un shooter 3D desarrollado con Three.js.',
-            'published' => true,
-            'url' => 'https://games.gameplatform.local/space-explorer',
-            'created_by' => $managerUser->id,
-        ]);
- 
-        Game::create([
-            'title' => 'Maze Runner',
-            'description' => 'Laberinto 3D procedural. Encuentra la salida antes de que se acabe el tiempo.',
-            'published' => false, // En desarrollo, no visible para jugadores
-            'url' => 'https://games.gameplatform.local/maze-runner',
-            'created_by' => $managerUser->id,
-        ]);
+        Game::updateOrCreate(
+            ['slug' => 'simon-says'],
+            [
+                'title' => 'Simon Says',
+                'slug' => 'simon-says',
+                'description' => 'Juego de memoria con colores. Sigue la secuencia.',
+                'component' => 'SimonSays',
+                'url' => null,
+                'thumbnail_path'=> null,
+                'published' => true,
+                'created_by' => $managerUser->id,
+            ]
+        );
+
+        Game::updateOrCreate(
+            ['slug' => 'memory-pulse'],
+            [
+                'title' => 'Memory Pulse',
+                'slug' => 'memory-pulse',
+                'description' => 'Juego de memoria visual. Encuentra las parejas.',
+                'component' => 'MemoryPulse',
+                'url' => null,
+                'thumbnail_path'=> null,
+                'published' => true,
+                'created_by' => $managerUser->id,
+            ]
+        );
+
+        Game::updateOrCreate(
+            ['slug' => 'rhythm-grid'],
+            [
+                'title' => 'Rhythm Grid',
+                'slug' => 'rhythm-grid',
+                'description' => 'Juego rítmico. Toca los cuadros al ritmo.',
+                'component' => 'RhythmGrid',
+                'url' => null,
+                'thumbnail_path'=> null,
+                'published' => true,
+                'created_by' => $managerUser->id,
+            ]
+        );
+
+        Game::updateOrCreate(
+            ['slug' => 'space-debris'],
+            [
+                'title' => 'Space Debris',
+                'slug' => 'space-debris',
+                'description' => 'Shooter 3D en el espacio. Esquiva y dispara.',
+                'component' => null,
+                'url' => '/games/space-debris/index.html',
+                'thumbnail_path'=> null,
+                'published' => true,
+                'created_by' => $managerUser->id,
+            ]
+        );
     }
 }

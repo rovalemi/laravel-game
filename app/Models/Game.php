@@ -14,16 +14,23 @@ class Game extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'description',
         'published',
         'url',
         'thumbnail_path',
         'created_by',
+        'component',
     ];
 
     protected $casts = [
         'published' => 'boolean',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     /** Relaciones */
 

@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug')->unique();
+            $table->string('component')->nullable();
             $table->text('description')->nullable();
             // published: controla visibilidad para jugadores (sin tocar código del juego)
             $table->boolean('published')->default(false);
             // URL o ruta interna donde vive el juego cliente (Three.js / JS)
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->string('thumbnail_path')->nullable();
             // Usuario gestor/admin que creó el juego
             $table->foreignId('created_by')->constrained('users')->restrictOnDelete();

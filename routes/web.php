@@ -42,8 +42,8 @@ Route::middleware('guest')->group(function() {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    Route::get('/chat', fn() => Inertia::render('Chat'))->name('chat');
-    Route::post('/chat', [ChatController::class, 'store']);
+    // Route::get('/chat', fn() => Inertia::render('Chat'))->name('chat');
+    // Route::post('/chat', [ChatController::class, 'store']);
 });
 
 /** Panel Administrador */
@@ -64,7 +64,7 @@ Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->nam
 /** Panel Jugador */
 Route::middleware(['auth', 'role:jugador'])->prefix('player')->name('player.')->group(function () {
     Route::get('/games', [PlayerGameController::class, 'index'])->name('games.index');
-    Route::get('/games/{game}/play', [PlayerGameController::class, 'play'])->name('games.play');
+    Route::get('/games/{game:slug}/play', [PlayerGameController::class, 'play'])->name('games.play');
     Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
 });
 
