@@ -13,8 +13,7 @@ export default function AdminDashboard({ stats = {} }) {
 
     const quickActions = [
         { href: route('admin.users.index'), label: 'Gestionar usuarios', icon: '◈', desc: 'Ver, editar y eliminar usuarios' },
-        { href: route('manager.dashboard'), label: 'Gestionar juegos', icon: '◈', desc: 'Ver, editar y eliminar juegos' },
-        { href: route('manager.games.index'), label: 'Ver juegos', icon: '◆', desc: 'Gestionar catálogo de juegos' },
+        { href: route('manager.games.index'), label: 'Gestionar juegos', icon: '◈', desc: 'Ver, editar y eliminar juegos' },
     ];
 
     return (

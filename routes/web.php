@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Manager\GameController as ManagerGameController;
 use App\Http\Controllers\Player\GameController as PlayerGameController;
 use App\Services\FacialService;
@@ -48,13 +50,13 @@ Route::middleware('auth')->group(function () {
 
 /** Panel Administrador */
 Route::middleware(['auth', 'role:administrador'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard'))->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', AdminUserController::class)->except(['create', 'edit']);;
 });
 
 /** Panel Gestor (accesible también por admin) */
 Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Manager/Dashboard'))->name('dashboard');
+    Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('games', ManagerGameController::class);
     Route::patch('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');

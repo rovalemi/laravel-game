@@ -29,28 +29,31 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'face_image' => ['required'], // ← NUEVO
+            'face_image' => ['nullable'],
         ]);
 
-        // 1. Guardar imagen en storage
-        $image = $request->face_image;
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-        $image = base64_decode($image);
+        $fileName = null;
 
-        $fileName = 'faces/' . uniqid() . '.jpg';
-        Storage::disk('public')->put($fileName, $image);
+        // Si el usuario capturó rostro
+        if ($request->face_image) {
+            $image = str_replace('data:image/jpeg;base64,', '', $request->face_image);
+            $image = base64_decode($image);
 
-        // 2. Obtener rol jugador
+            $fileName = 'faces/' . uniqid() . '.jpg';
+            Storage::disk('public')->put($fileName, $image);
+        }
+
+        // Rol jugador
         $playerRole = Role::where('name', Role::PLAYER)->firstOrFail();
 
-        // 3. Crear usuario con ruta de imagen
+        // Crear usuario
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $playerRole->id,
             'face_image_path' => $fileName,
-            'face_enrolled' => true,
+            'face_enrolled' => $fileName ? true : false,
         ]);
 
         event(new Registered($user));
