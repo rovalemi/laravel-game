@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\API\Controllers\ChatController;
+use App\Http\Controllers\API\ChatController;
 use App\Http\Controllers\API\EmotionController;
 use App\Http\Controllers\API\FacialController;
 use App\Http\Controllers\API\GameSessionController;

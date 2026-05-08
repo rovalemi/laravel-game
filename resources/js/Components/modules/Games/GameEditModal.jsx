@@ -1,35 +1,41 @@
 import { useForm } from '@inertiajs/react';
 
-import UserForm from '@/Components/modules/UserForm';
+import GameForm from './GameForm';
 import Button from '@/Components/ui/Button';
 
-export default function UserEditModal({ user, onClose, roles }) {
-    const { data, setData, put, processing, errors } = useForm({
-        name: user.name,
-        email: user.email,
-        role_id: user.role_id,
+export default function GameEditModal({ game, onClose }) {
+
+    const { data, setData, post, processing, errors } = useForm({
+        _method: 'PUT',
+        title: game.title,
+        slug: game.slug,
+        type: game.component ? 'internal' : 'external',
+        component: game.component ?? '',
+        url: game.url ?? '',
+        description: game.description ?? '',
+        thumbnail: null,
+        published: game.published,
     });
 
     const submit = (e) => {
         e.preventDefault();
-        put(route('admin.users.update', user.id), {
+        post(route('manager.games.update', game.slug), {
             onSuccess: () => onClose(),
         });
     };
 
     return (
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 w-full max-w-lg">
-            <h2 className="text-xl font-bold mb-2">Editar usuario</h2>
+            <h2 className="text-xl font-bold mb-2">Editar juego</h2>
             <p className="text-sm text-zinc-400 mb-6">
-                Modifica los datos del usuario seleccionado.
+                Modifica los datos del juego seleccionado.
             </p>
 
             <form onSubmit={submit} className="space-y-6">
-                <UserForm
+                <GameForm
                     data={data}
                     setData={setData}
                     errors={errors}
-                    roles={roles}
                     isEditing={true}
                 />
 

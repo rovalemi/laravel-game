@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Manager\GameController as ManagerGameController;
 use App\Http\Controllers\Player\GameController as PlayerGameController;
@@ -58,9 +57,10 @@ Route::middleware(['auth', 'role:administrador'])->prefix('admin')->name('admin.
 Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->name('manager.')->group(function () {
     Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('games', ManagerGameController::class);
-    Route::patch('games/{game}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
-    Route::get('games/{game}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
+    Route::resource('games', ManagerGameController::class)
+        ->parameters(['games' => 'game:slug']);
+    Route::patch('games/{game:slug}/toggle-publish', [ManagerGameController::class, 'togglePublish'])->name('games.toggle-publish');
+    Route::get('games/{game:slug}/preview', [ManagerGameController::class, 'preview'])->name('games.preview');
 });
 
 /** Panel Jugador */

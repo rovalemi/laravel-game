@@ -20,12 +20,14 @@ export default function ManagerDashboard({ stats = {}, recentGames = [] }) {
                 title="Panel del gestor"
                 subtitle="Estado de tu catálogo de juegos"
                 action={
-                    <Link
-                        href={route('manager.games.create')}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors"
-                    >
-                        + Nuevo juego
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href={route('manager.games.index')}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-colors"
+                        >
+                            Gestionar juegos
+                        </Link>
+                    </div>
                 }
             />
 

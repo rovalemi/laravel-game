@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/react';
 
-import UserForm from '@/Components/modules/UserForm';
+import UserForm from '@/Components/modules/Users/UserForm';
 import Button from '@/Components/ui/Button';
 
 export default function UserCreateModal({ onClose, roles }) {

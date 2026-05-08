@@ -24,15 +24,8 @@ class GameController extends Controller
     {
         abort_unless($game->published, 404);
 
-        if ($game->component) {
-            return Inertia::render('Games/' . $game->component, [
-                'game'     => $game,
-                'apiToken' => Auth::user()->createToken('game-session')->plainTextToken,
-            ]);
-        }
-
         return Inertia::render('Player/Games/Play', [
-            'game'     => $game->only('id', 'title', 'description', 'url', 'thumbnail_path'),
+            'game'     => $game,
             'apiToken' => Auth::user()->createToken('game-session')->plainTextToken,
         ]);
     }

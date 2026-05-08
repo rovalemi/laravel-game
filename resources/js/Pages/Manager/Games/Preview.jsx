@@ -1,75 +1,84 @@
 import { Head, Link } from '@inertiajs/react';
+import { Suspense, lazy } from 'react';
 
 import AppLayout from '@/Layouts/AppLayout';
 import PageHeader from '@/Components/shared/PageHeader';
 import { Badge, Button } from '@/Components/ui';
+import { internalGames } from '@/Pages/Games/internalGames';
 
 export default function ManagerGamesPreview({ game }) {
+
+    const InternalGame = game.component && internalGames[game.component]
+        ? lazy(internalGames[game.component])
+        : null;
+
     return (
         <AppLayout title="Vista previa">
             <Head title={`Vista previa: ${game.title}`} />
 
             <PageHeader
-                title={game.title}
-                subtitle="Vista previa del gestor — el jugador verá esto mismo al acceder"
-                action={
+                title={
                     <div className="flex items-center gap-3">
+                        <span>{game.title}</span>
                         <Badge variant={game.published ? 'green' : 'gray'}>
                             {game.published ? 'Publicado' : 'Borrador'}
                         </Badge>
-                        <Link href={route('manager.games.edit', game.id)}>
-                            <Button variant="secondary" size="md">Editar</Button>
-                        </Link>
+                    </div>
+                }
+                subtitle="Vista previa del gestor — así lo verá el jugador"
+                action={
+                    <div className="flex items-center gap-3">
                         <Link href={route('manager.games.index')}>
-                            <Button variant="ghost" size="md">← Volver</Button>
+                            <Button variant="secondary" size="md" className="flex items-center gap-2">
+                                ← Volver
+                            </Button>
                         </Link>
                     </div>
                 }
             />
 
-            {/* Aviso de modo previsualización */}
-            <div className="flex items-center gap-3 px-4 py-3 mb-5 rounded-xl bg-amber-950 border border-amber-800 text-amber-400 text-sm">
-                <span className="text-base">👁</span>
-                <span>
-                    Estás en modo previsualización. El juego se carga desde{' '}
-                    <code className="font-mono text-xs bg-amber-900/40 px-1.5 py-0.5 rounded">{game.url}</code>
-                </span>
-            </div>
+            {/* CONTENEDOR DEL PREVIEW */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden flex items-center justify-center p-6"
+                 style={{ height: 'calc(100vh - 260px)' }}>
 
-            {/* Iframe del juego */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden" style={{ height: 'calc(100vh - 280px)' }}>
-                {game.url ? (
+                {/* JUEGO EXTERNO */}
+                {game.url && (
                     <iframe
                         src={game.url}
-                        className="w-full h-full border-none"
+                        className="w-full h-full border-none rounded-xl"
                         title={`Vista previa: ${game.title}`}
                         allow="camera; microphone; fullscreen"
                     />
-                ) : (
+                )}
+
+                {/* JUEGO INTERNO */}
+                {InternalGame && (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-full max-w-[900px] h-full max-h-[700px] flex items-center justify-center scale-[0.95] origin-center">
+                            <Suspense fallback={<div className="p-10 text-zinc-500">Cargando juego interno…</div>}>
+                                <InternalGame game={game} />
+                            </Suspense>
+                        </div>
+                    </div>
+                )}
+
+                {/* ERROR */}
+                {game.component && !InternalGame && (
+                    <div className="p-10 text-red-500">
+                        El componente <strong>{game.component}</strong> no existe en <code>/Pages/Games</code>.
+                    </div>
+                )}
+
+                {/* SIN NADA */}
+                {!game.url && !game.component && (
                     <div className="flex flex-col items-center justify-center h-full text-zinc-600">
                         <span className="text-4xl mb-3">◆</span>
-                        <p className="text-sm">No hay URL configurada para este juego.</p>
-                        <Link href={route('manager.games.edit', game.id)} className="mt-3">
-                            <Button variant="secondary" size="sm">Configurar URL</Button>
+                        <p className="text-sm">Este juego no tiene URL ni componente configurado.</p>
+                        <Link href={route('manager.games.edit', game.slug)} className="mt-3">
+                            <Button variant="secondary" size="sm">Configurar</Button>
                         </Link>
                     </div>
                 )}
-            </div>
-
-            {/* Info técnica */}
-            <div className="mt-4 grid grid-cols-3 gap-3">
-                {[
-                    { label: 'ID del juego', value: `#${game.id}` },
-                    { label: 'Estado',       value: game.published ? 'Publicado' : 'Borrador' },
-                    { label: 'URL',          value: game.url || '—' },
-                ].map(item => (
-                    <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
-                        <p className="text-xs text-zinc-600 mb-1">{item.label}</p>
-                        <p className="text-sm font-mono text-zinc-300 truncate" title={item.value}>
-                            {item.value}
-                        </p>
-                    </div>
-                ))}
             </div>
         </AppLayout>
     );

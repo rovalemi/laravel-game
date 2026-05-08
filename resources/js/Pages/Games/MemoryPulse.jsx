@@ -1,15 +1,14 @@
-import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import AppLayout from '@/Layouts/AppLayout';
 
 /**
  * Memory Pulse — juego de memoria con esferas 3D en Three.js.
  *
- * Mecánica: aparecen N esferas en una esfera mayor. Una a una se iluminan
- * en secuencia. El jugador debe repetir la secuencia clickando las esferas
- * en el mismo orden. Cada ronda añade un elemento más.
+ * Mecánica: varias esferas distribuidas en el espacio se iluminan una a una
+ * siguiendo una secuencia creciente. El jugador debe repetir la secuencia
+ * clickando las esferas en el mismo orden. Cada ronda añade un nuevo elemento.
  *
- * Similar al visual-memory-game pero en 3D.
+ * Utiliza Three.js para renderizar la estructura 3D y WebAudio API para
+ * generar retroalimentación sonora en cada interacción.
  */
 
 function useGameAPI(apiToken, gameId) {
@@ -55,13 +54,13 @@ const NODE_COLORS_ON  = [0x7c3aed, 0x06b6d4, 0x10b981, 0xf59e0b, 0xf87171, 0xa78
 
 export default function MemoryPulse({ game, apiToken }) {
     const mountRef   = useRef(null);
-    const threeRef   = useRef({});  // { scene, camera, renderer, nodes, animId }
+    const threeRef   = useRef({});
 
-    const [phase,    setPhase]    = useState('idle');   // idle | showing | input | success | fail | gameover
+    const [phase,    setPhase]    = useState('idle');
     const [level,    setLevel]    = useState(1);
     const [score,    setScore]    = useState(0);
     const [sequence, setSequence] = useState([]);
-    const [progress, setProgress] = useState(0);  // cuántos ha acertado el jugador en la ronda
+    const [progress, setProgress] = useState(0);
 
     const sequenceRef = useRef([]);
     const phaseRef    = useRef('idle');
@@ -69,7 +68,7 @@ export default function MemoryPulse({ game, apiToken }) {
 
     const { start: startAPI, end: endAPI } = useGameAPI(apiToken, game?.id);
 
-    // ── Iluminar un nodo ───────────────────────────────────────────────────
+    // ── Iluminar nodo ─────────────────────────────────────────────────────
     const lightNode = useCallback((index, on) => {
         const nodes = threeRef.current.nodes;
         if (!nodes?.[index]) return;
@@ -77,7 +76,7 @@ export default function MemoryPulse({ game, apiToken }) {
         nodes[index].material.emissiveIntensity = on ? 0.8 : 0;
     }, []);
 
-    // ── Reproducir la secuencia ────────────────────────────────────────────
+    // ── Reproducir secuencia ─────────────────────────────────────────────
     const playSequence = useCallback(async (seq) => {
         phaseRef.current = 'showing';
         setPhase('showing');
@@ -97,7 +96,7 @@ export default function MemoryPulse({ game, apiToken }) {
         setPhase('input');
     }, [lightNode]);
 
-    // ── Iniciar juego ──────────────────────────────────────────────────────
+    // ── Iniciar juego ─────────────────────────────────────────────────────
     const startGame = useCallback(async () => {
         await startAPI();
         const firstIdx = Math.floor(Math.random() * 8);
@@ -110,7 +109,7 @@ export default function MemoryPulse({ game, apiToken }) {
         await playSequence(seq);
     }, [startAPI, playSequence]);
 
-    // ── Click en un nodo ───────────────────────────────────────────────────
+    // ── Click en nodo ─────────────────────────────────────────────────────
     const handleNodeClick = useCallback(async (index) => {
         if (phaseRef.current !== 'input') return;
 
@@ -118,13 +117,11 @@ export default function MemoryPulse({ game, apiToken }) {
         const pos      = inputRef.current;
         const expected = seq[pos];
 
-        // Feedback visual rápido
         lightNode(index, true);
         await new Promise(r => setTimeout(r, 200));
         lightNode(index, false);
 
         if (index !== expected) {
-            // Error
             phaseRef.current = 'fail';
             setPhase('gameover');
             await endAPI(score, { level_reached: level });
@@ -136,7 +133,6 @@ export default function MemoryPulse({ game, apiToken }) {
         setProgress(newProgress);
 
         if (newProgress === seq.length) {
-            // Ronda superada
             const newScore = score + seq.length * 10;
             setScore(newScore);
             phaseRef.current = 'success';
@@ -153,7 +149,7 @@ export default function MemoryPulse({ game, apiToken }) {
         }
     }, [score, level, lightNode, endAPI, playSequence]);
 
-    // ── Motor Three.js ─────────────────────────────────────────────────────
+    // ── Motor Three.js ───────────────────────────────────────────────────
     useEffect(() => {
         let THREE, renderer, scene, camera, animId;
         const nodes = [];
@@ -181,17 +177,22 @@ export default function MemoryPulse({ game, apiToken }) {
             dLight.position.set(3, 5, 5);
             scene.add(dLight);
 
-            // Esfera central decorativa
+            // Esfera central
             const coreGeo = new THREE.SphereGeometry(0.4, 32, 32);
-            const coreMat = new THREE.MeshPhongMaterial({ color: 0x111133, wireframe: true, opacity: 0.3, transparent: true });
+            const coreMat = new THREE.MeshPhongMaterial({
+                color: 0x111133,
+                wireframe: true,
+                opacity: 0.3,
+                transparent: true
+            });
             scene.add(new THREE.Mesh(coreGeo, coreMat));
 
             // Nodos
             NODE_POSITIONS.forEach((pos, i) => {
                 const geo  = new THREE.SphereGeometry(0.22, 16, 16);
                 const mat  = new THREE.MeshPhongMaterial({
-                    color:            NODE_COLORS_OFF,
-                    emissive:         new THREE.Color(NODE_COLORS_ON[i]),
+                    color: NODE_COLORS_OFF,
+                    emissive: new THREE.Color(NODE_COLORS_ON[i]),
                     emissiveIntensity: 0,
                 });
                 const mesh = new THREE.Mesh(geo, mat);
@@ -203,7 +204,7 @@ export default function MemoryPulse({ game, apiToken }) {
 
             threeRef.current = { scene, camera, renderer, nodes };
 
-            // Raycaster para clicks
+            // Raycaster
             const raycaster = new THREE.Raycaster();
             const mouse     = new THREE.Vector2();
 
@@ -219,12 +220,11 @@ export default function MemoryPulse({ game, apiToken }) {
             };
             renderer.domElement.addEventListener('click', onClick);
 
-            // Loop
+            // Animación
             let t = 0;
             function animate() {
                 animId = requestAnimationFrame(animate);
                 t += 0.01;
-                // Rotar suavemente la escena
                 scene.rotation.y = Math.sin(t * 0.3) * 0.3;
                 scene.rotation.x = Math.sin(t * 0.2) * 0.15;
                 renderer.render(scene, camera);
@@ -236,16 +236,11 @@ export default function MemoryPulse({ game, apiToken }) {
 
         return () => {
             cancelAnimationFrame(animId);
-            if (renderer) { renderer.dispose(); renderer.domElement?.remove(); }
+            if (renderer) {
+                renderer.dispose();
+                renderer.domElement?.remove();
+            }
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Actualizar handleNodeClick cuando cambia (useCallback deps)
-    useEffect(() => {
-        const el = threeRef.current.renderer?.domElement;
-        if (!el) return;
-        // El click se maneja por closure — no necesita re-bind
     }, [handleNodeClick]);
 
     // ── Labels de fase ─────────────────────────────────────────────────────
@@ -258,73 +253,97 @@ export default function MemoryPulse({ game, apiToken }) {
     }[phase] ?? '';
 
     return (
-        <AppLayout title={game?.title ?? 'Memory Pulse'}>
-            <Head title="Memory Pulse" />
+        <div className="flex flex-col w-full h-full gap-3 select-none">
 
-            <div className="flex flex-col h-[calc(100vh-120px)] gap-3">
-
-                {/* HUD */}
-                <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl shrink-0">
-                    <div className="flex items-center gap-6 text-sm">
-                        <span className="text-zinc-500">Nivel <strong className="text-violet-400 text-lg ml-1">{level}</strong></span>
-                        <span className="text-zinc-500">Puntos <strong className="text-zinc-300 ml-1">{score}</strong></span>
-                    </div>
-                    {phaseLabel && (
-                        <span className={`text-xs px-3 py-1 rounded-full ${phase === 'input' ? 'bg-violet-900 text-violet-300' : phase === 'success' ? 'bg-emerald-950 text-emerald-400' : 'bg-zinc-800 text-zinc-400'}`}>
-                            {phaseLabel}
-                        </span>
-                    )}
+            {/* HUD */}
+            <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl shrink-0">
+                <div className="flex items-center gap-6 text-sm">
+                    <span className="text-zinc-500">
+                        Nivel <strong className="text-violet-400 text-lg ml-1">{level}</strong>
+                    </span>
+                    <span className="text-zinc-500">
+                        Puntos <strong className="text-zinc-300 ml-1">{score}</strong>
+                    </span>
                 </div>
 
-                {/* Canvas Three.js */}
-                <div ref={mountRef} className="flex-1 rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 relative">
+                {phaseLabel && (
+                    <span className={`text-xs px-3 py-1 rounded-full ${
+                        phase === 'input'
+                            ? 'bg-violet-900 text-violet-300'
+                            : phase === 'success'
+                                ? 'bg-emerald-950 text-emerald-400'
+                                : 'bg-zinc-800 text-zinc-400'
+                    }`}>
+                        {phaseLabel}
+                    </span>
+                )}
+            </div>
 
-                    {/* Pantalla inicio */}
-                    {phase === 'idle' && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 z-10">
-                            <p className="text-5xl mb-4">🧠</p>
-                            <h2 className="text-2xl font-bold text-zinc-100 mb-2">Memory Pulse</h2>
-                            <p className="text-sm text-zinc-400 mb-8 text-center max-w-xs">
-                                Observa qué esferas se iluminan y en qué orden.<br/>
-                                Repite la secuencia clickando en las esferas.
-                            </p>
-                            <button onClick={startGame}
-                                className="px-8 py-3 rounded-xl font-bold text-white bg-violet-600 hover:bg-violet-500 transition-colors">
-                                Empezar
+            {/* Canvas Three.js */}
+            <div ref={mountRef} className="flex-1 rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 relative">
+
+                {/* Pantalla inicio */}
+                {phase === 'idle' && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 z-10">
+                        <p className="text-5xl mb-4">🧠</p>
+                        <h2 className="text-2xl font-bold text-zinc-100 mb-2">Memory Pulse</h2>
+                        <p className="text-sm text-zinc-400 mb-8 text-center max-w-xs">
+                            Observa qué esferas se iluminan y en qué orden.<br/>
+                            Repite la secuencia clickando en las esferas.
+                        </p>
+                        <button
+                            onClick={startGame}
+                            className="px-8 py-3 rounded-xl font-bold text-white bg-violet-600 hover:bg-violet-500 transition-colors"
+                        >
+                            Empezar
+                        </button>
+                    </div>
+                )}
+
+                {/* Game Over */}
+                {phase === 'gameover' && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10">
+                        <p className="text-5xl mb-4">💫</p>
+                        <h2 className="text-2xl font-bold text-red-400 mb-2">Secuencia incorrecta</h2>
+                        <p className="text-zinc-400 mb-1">
+                            Llegaste al nivel <strong className="text-white">{level}</strong>
+                        </p>
+                        <p className="text-zinc-500 text-sm mb-6">
+                            Puntuación: <strong className="text-white">{score}</strong>
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={startGame}
+                                className="px-6 py-2.5 rounded-xl font-semibold text-white bg-violet-600 hover:bg-violet-500 transition-colors"
+                            >
+                                Jugar de nuevo
                             </button>
                         </div>
-                    )}
-
-                    {/* Game Over */}
-                    {phase === 'gameover' && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10">
-                            <p className="text-5xl mb-4">💫</p>
-                            <h2 className="text-2xl font-bold text-red-400 mb-2">Secuencia incorrecta</h2>
-                            <p className="text-zinc-400 mb-1">Llegaste al nivel <strong className="text-white">{level}</strong></p>
-                            <p className="text-zinc-500 text-sm mb-6">Puntuación: <strong className="text-white">{score}</strong></p>
-                            <div className="flex gap-3">
-                                <button onClick={startGame}
-                                    className="px-6 py-2.5 rounded-xl font-semibold text-white bg-violet-600 hover:bg-violet-500 transition-colors">
-                                    Jugar de nuevo
-                                </button>
-                                <a href={route('player.games.index')}
-                                    className="px-6 py-2.5 rounded-xl font-semibold text-zinc-400 bg-zinc-800 hover:bg-zinc-700 transition-colors">
-                                    Volver
-                                </a>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Progreso de secuencia */}
-                {(phase === 'showing' || phase === 'input') && (
-                    <div className="flex gap-1.5 justify-center shrink-0">
-                        {sequence.map((_, i) => (
-                            <div key={i} className={`w-2 h-2 rounded-full transition-all ${i < progress ? 'bg-violet-500' : i === progress && phase === 'input' ? 'bg-zinc-500 ring-2 ring-violet-500' : 'bg-zinc-800'}`} />
-                        ))}
                     </div>
                 )}
             </div>
-        </AppLayout>
+
+            {/* Progreso (espacio reservado siempre) */}
+            <div className="h-6 flex items-center justify-center shrink-0">
+                {(phase === 'showing' || phase === 'input') ? (
+                    <div className="flex gap-1.5">
+                        {sequence.map((_, i) => (
+                            <div
+                                key={i}
+                                className={`w-2 h-2 rounded-full transition-all ${
+                                    i < progress
+                                        ? 'bg-violet-500'
+                                        : i === progress && phase === 'input'
+                                            ? 'bg-zinc-500 ring-2 ring-violet-500'
+                                            : 'bg-zinc-800'
+                                }`}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="h-2" />
+                )}
+            </div>
+        </div>
     );
 }
