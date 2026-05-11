@@ -5,6 +5,7 @@ use App\Http\Controllers\API\EmotionController;
 use App\Http\Controllers\API\FacialController;
 use App\Http\Controllers\API\GameSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Services\RabbitMQService;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sessions', [GameSessionController::class, 'store']);
@@ -19,4 +20,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/games/{game:slug}/messages', [ChatController::class, 'index']);
     Route::post('/games/{game:slug}/messages', [ChatController::class, 'store']);
+});
+
+Route::post('/rabbitmq/test', function () {
+    RabbitMQService::publish('game_events', [
+        'event' => 'test_event',
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+
+    return ['status' => 'ok'];
 });
