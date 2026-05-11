@@ -56,26 +56,27 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role->name === Role::ADMIN;
+        return $this->role()->value('name') === Role::ADMIN;
     }
 
     public function isManager(): bool
     {
-        return $this->role->name === Role::MANAGER;
+        return $this->role()->value('name') === Role::MANAGER;
     }
 
     public function isPlayer(): bool
     {
-        return $this->role->name === Role::PLAYER;
+        return $this->role()->value('name') === Role::PLAYER;
     }
 
     public function isAdminOrManager(): bool
     {
-        return $this->isAdmin() || $this->isManager();
+        $role = $this->role()->value('name');
+        return $role === Role::ADMIN || $role === Role::MANAGER;
     }
 
     public function getRoleNameAttribute(): string
     {
-        return $this->role->name ?? '';
+        return $this->role()->value('name') ?? '';
     }
 }

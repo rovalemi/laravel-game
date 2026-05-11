@@ -66,7 +66,7 @@ Route::middleware(['auth', 'role:administrador,gestor'])->prefix('manager')->nam
 /** Panel Jugador */
 Route::middleware(['auth', 'role:jugador'])->prefix('player')->name('player.')->group(function () {
     Route::get('/games', [PlayerGameController::class, 'index'])->name('games.index');
-    Route::get('/games/{game:slug}/play', [PlayerGameController::class, 'play'])->name('games.play');
+    Route::get('/games/{game:slug}', [PlayerGameController::class, 'play'])->name('games.play');
     Route::get('/history', [PlayerGameController::class, 'history'])->name('games.history');
 });
 

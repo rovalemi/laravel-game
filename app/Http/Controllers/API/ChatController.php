@@ -13,7 +13,7 @@ class ChatController extends Controller
 {
     public function index(Game $game): JsonResponse
     {
-        abort_unless($game->published || auth()->user()->isAdminOrManager(), 404);
+        // abort_unless($game->published || auth()->user()->isAdminOrManager(), 404);
 
         $messages = ChatMessage::where('game_id', $game->id)
             ->with('user:id,name')
@@ -26,7 +26,7 @@ class ChatController extends Controller
 
     public function store(Request $request, Game $game): JsonResponse
     {
-        abort_unless($game->published || auth()->user()->isAdminOrManager(), 404);
+        // abort_unless($game->published || auth()->user()->isAdminOrManager(), 404);
 
         $request->validate([
             'message' => 'required|string|max:500',

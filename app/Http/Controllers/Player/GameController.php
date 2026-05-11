@@ -22,7 +22,7 @@ class GameController extends Controller
 
     public function play(Game $game): Response
     {
-        abort_unless($game->published, 404);
+        // abort_unless($game->published, 404);
 
         return Inertia::render('Player/Games/Play', [
             'game'     => $game,

@@ -6,7 +6,6 @@ use App\Http\Controllers\API\FacialController;
 use App\Http\Controllers\API\GameSessionController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sessions', [GameSessionController::class, 'store']);
     Route::get('/sessions/{token}', [GameSessionController::class, 'show']);
@@ -18,6 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/face/enroll', [FacialController::class, 'enroll']);
     Route::post('/face/verify', [FacialController::class, 'verify']);
 
-    Route::get('/games/{game}/messages', [ChatController::class, 'index']);
-    Route::post('/games/{game}/messages', [ChatController::class, 'store']);
+    Route::get('/games/{game:slug}/messages', [ChatController::class, 'index']);
+    Route::post('/games/{game:slug}/messages', [ChatController::class, 'store']);
 });

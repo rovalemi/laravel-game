@@ -81,17 +81,17 @@ export default function PlayerGamesPlay({ game, apiToken }) {
         return () => clearInterval(interval);
     }, [API, apiToken]);
 
-    // ───────────────────────────────────────────────
-    // 3. CARGAR MENSAJES INICIALES
-    // ───────────────────────────────────────────────
-    useEffect(() => {
-        fetch(`${API}/api/games/${game.id}/messages`, {
-            headers: { Authorization: `Bearer ${apiToken}` },
-        })
-            .then(r => r.ok ? r.json() : [])
-            .then(setMessages)
-            .catch(() => {});
-    }, [API, game.id, apiToken]);
+// ───────────────────────────────────────────────
+// 3. CARGAR MENSAJES INICIALES
+// ───────────────────────────────────────────────
+useEffect(() => {
+    fetch(`/api/games/${game.slug}/messages`, {
+        headers: { Authorization: `Bearer ${apiToken}` },
+    })
+        .then(r => r.ok ? r.json() : [])
+        .then(setMessages)
+        .catch(() => {});
+}, [API, game.slug, apiToken]);
 
     // ───────────────────────────────────────────────
     // 4. WEBSOCKETS — ESCUCHAR MENSAJES NUEVOS
@@ -111,33 +111,33 @@ export default function PlayerGamesPlay({ game, apiToken }) {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // ───────────────────────────────────────────────
-    // 5. ENVIAR MENSAJE
-    // ───────────────────────────────────────────────
-    const sendMessage = async (e) => {
-        e.preventDefault();
-        if (!newMessage.trim() || sending) return;
-        setSending(true);
+// ───────────────────────────────────────────────
+// 5. ENVIAR MENSAJE
+// ───────────────────────────────────────────────
+const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || sending) return;
+    setSending(true);
 
-        try {
-            const res = await fetch(`${API}/api/games/${game.id}/messages`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${apiToken}`,
-                },
-                body: JSON.stringify({ content: newMessage.trim() }),
-            });
+    try {
+        const res = await fetch(`${API}/api/games/${game.slug}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiToken}`,
+            },
+            body: JSON.stringify({ message: newMessage.trim() }),
+        });
 
-            if (res.ok) {
-                const msg = await res.json();
-                setMessages(prev => [...prev, msg]);
-                setNewMessage('');
-            }
-        } finally {
-            setSending(false);
+        if (res.ok) {
+            const msg = await res.json();
+            setMessages(prev => [...prev, msg]);
+            setNewMessage('');
         }
-    };
+    } finally {
+        setSending(false);
+    }
+};
 
     // ───────────────────────────────────────────────
     // 6. RENDER
